@@ -12,7 +12,7 @@ class Topic(models.Model):
 class Entry(models.Model):
     '''Inforamtion learned by user about topic'''
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
-    text = models.TextField
+    text = models.TextField()
     date_added = models.DateTimeField(auto_now_add=True)
 
     class Meta():
@@ -20,5 +20,5 @@ class Entry(models.Model):
 
     def __str__(self):
         '''Returns string view of model'''
-        text_preview = self.text[:50] if len(self.text) > 50 else {self.text}
-        return f'{self.text}...'
+        text_preview = f'{self.text[:50]}...' if len(self.text) > 50 else self.text
+        return text_preview
