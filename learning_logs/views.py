@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from .models import Topic, Entry
 from .forms import TopicForm, EntryForm
+from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, HttpResponsePermanentRedirect
+from django.urls import reverse
 
 # Create your views here.
 def index(request):
@@ -61,3 +63,24 @@ def edit_entry(request, entry_id):
 
     context = {'entry': entry, 'topic': topic, 'form': form}
     return render(request, 'learning_logs/edit_entry.html', context)
+
+#request это ссылка на django класс HttpResponse которая содержит информации о запросе
+def tests(request):
+    return HttpResponse("<h1>Тестовая страница из приложения learning_log</h2>")
+
+def test_id(request, tests_id):
+    return HttpResponse(f"Страница  с запросом int {tests_id}")
+
+def test_slug(request, tests_slug):
+    if request.GET:
+        print(request.GET)
+    return HttpResponse(f"Страница  с запросом slug {tests_slug}")
+
+def archive(request, year):
+    if year > 2023:
+        uri = reverse('learning_logs:test', args=('sport', ))
+        return HttpResponsePermanentRedirect(uri)
+    return HttpResponse(f"Архив по годам {year}")
+
+def page_not_found(request, exception):
+    return HttpResponseNotFound("<h1>Страница не найдена</h2>")

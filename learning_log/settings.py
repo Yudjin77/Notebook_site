@@ -25,13 +25,14 @@ SECRET_KEY = "django-insecure-)*_(k08r#dsanis6^r=k02fp1clkoa@pb=ij1qt^#bg+xe6#%m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
 
 INSTALLED_APPS = [
     'learning_logs',
+    'users',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -55,8 +56,9 @@ ROOT_URLCONF = "learning_log.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
-        "APP_DIRS": True,
+        "DIRS": [
+        ], #нестандартные пути к файлам шаблонам
+        "APP_DIRS": True, #если True - говорит о том что ищем шаблоны в templates
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
