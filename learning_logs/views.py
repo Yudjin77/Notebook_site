@@ -3,26 +3,43 @@ from .models import Topic, Entry
 from .forms import TopicForm, EntryForm
 from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.urls import reverse
+from django.template.loader import render_to_string
+
+menu = [
+    {"title":"About us", "url_name": "about"},
+    {"title":"Add post", "url_name": "addpage"},
+    {"title":"Returning call", "url_name": "contact"},
+    {"title":"Enter", "url_name": "login"}
+]
+
+d = [
+    {'id': 1, 'title': "Margo", 'content': "Famoues actor", 'permanent': True},
+    {'id': 2, 'title': "David", 'content': "Rich billioner", 'permanent': False},
+    {'id': 3, 'title': "Rick", 'content': "Best of the best", 'permanent': True}
+]
 
 def index(request):
-    return HttpResponse('The Page of app learning_logs')
+    data = {
+        'title': 'Blog',
+        'posts': d,
+        'menu': menu
+    }
+    return render(request, 'learning_logs/index-learn.html', context=data)
 
-def categories(request, cat_id):
-    if cat_id % 2 == 1:
-        raise Http404()
-    return HttpResponse(f'<h1>Posts of Categories by ID</h2><p>id: {cat_id}</p>')
+def about(request):
+    return render(request, 'learning_logs/about-learn.html', {'about': 'about Site', 'menu': menu})
 
-def categories_by_slug(request, cat_slug):
-    return HttpResponse(f"<h1>Posts of Categories by Slug</h1><p>slug: {cat_slug}</p>")
+def addpage(request):
+    return HttpResponse("Adding of post")
 
-def archive(request, year):
-    if year > 2025:
-        uri = reverse('cats_id', args=('1234', ))
-        return redirect(uri)
-    return HttpResponse(f"<h1>Page from archive</h1><p>year: {year}</p>")
+def contact(request):
+    return HttpResponse("Returning call")
 
-def page_not_found(request, exception):
-    return HttpResponseNotFound("<h1>Page not found</h1>")
+def login(request):
+    return HttpResponse("Autorization")
+
+def show_post(request, post_id):
+    return HttpResponse(f'Show of page with id = {post_id}')
 
 
 # Create your views here.

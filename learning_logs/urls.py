@@ -12,9 +12,19 @@ register_converter(converters.FourDigitYearConverter, 'yyyy')
 
 urlpatterns = [
     path('', views.index, name='home'),
-    path('cats/<int:cat_id>', views.categories, name='cats_id'),
-    path('cats/<slug:cat_slug>', views.categories_by_slug, name='cats'),
-    path('archive/<yyyy:year>/', views.archive, name='archive-year')
+    path('about/', views.about, name='about'),
+    path('addpage/', views.addpage, name='addpage'),
+    path('contact/', views.contact, name='contact'),
+    path('login/', views.login, name='login'),
+    path('post/<int:post_id>\/', views.show_post, name='post')
+
+
+
+
+
+
+
+
 #     path('topics/', views.topics, name='topics'),
 #     path('topics/<int:topic_id>/', views.topic, name='topic'),
 #     path('new_topic/', views.new_topic, name='new_topic'),

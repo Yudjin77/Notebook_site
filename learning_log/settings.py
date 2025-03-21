@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-)*_(k08r#dsanis6^r=k02fp1clkoa@pb=ij1qt^#bg+xe6#%m"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
@@ -55,10 +55,11 @@ ROOT_URLCONF = "learning_log.urls"
 
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "BACKEND": "django.template.backends.django.DjangoTemplates", #Указываеться что втсроен стандартный шаблонизатор Джанго
         "DIRS": [
+            BASE_DIR / 'learning_log' / 'templates',
         ], #нестандартные пути к файлам шаблонам
-        "APP_DIRS": True, #если True - говорит о том что ищем шаблоны в templates
+        "APP_DIRS": True, #если True - говорит о том что внутри приложений ищем шаблоны в templates
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",

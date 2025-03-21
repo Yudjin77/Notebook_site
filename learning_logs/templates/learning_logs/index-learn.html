@@ -1,0 +1,25 @@
+{% extends 'base-learn.html' %}
+
+{% block content%}
+<p>{{ about }}</p>
+
+{% include 'learning_logs/includes/nav.html'%}
+
+<ul>
+    {% for p in posts %}
+    {% if p.permanent %}
+    <li>
+        <h2>{{ p.title }}</h2>
+        <p>{{ p.content }}</p>
+        <p><a href="{% url 'post' p.id %}">Read post</a></p>
+        {% if not forloop.last %}
+            <hr>
+        {% endif %}
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+
+{% include 'learning_logs/includes/nav.html'%}
+
+{% endblock %}
