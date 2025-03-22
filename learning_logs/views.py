@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from .models import Topic, Entry
-from .forms import TopicForm, EntryForm
+# from .models import Topic, Entry
+# from .forms import TopicForm, EntryForm
 from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.urls import reverse
 from django.template.loader import render_to_string
@@ -12,22 +12,31 @@ menu = [
     {"title":"Enter", "url_name": "login"}
 ]
 
-d = [
-    {'id': 1, 'title': "Margo", 'content': "Famoues actor", 'permanent': True},
-    {'id': 2, 'title': "David", 'content': "Rich billioner", 'permanent': False},
-    {'id': 3, 'title': "Rick", 'content': "Best of the best", 'permanent': True}
+data_db = [
+    {'id': 1, 'title': "Margo", 'content':'''<h1>Margot Elise Robbie</h1> was born on July 2, 1990 in Dalby, Queensland, Australia to Scottish parents. 
+    Her mother, Sarie Kessler, is a physiotherapist, and her father, is Doug Robbie. 
+    She comes from a family of four children, having two brothers and one sister.''', 'is_published': True},
+    {'id': 2, 'title': "David", 'content': "Rich billioner", 'is_published': True},
+    {'id': 3, 'title': "Rick", 'content': "Best of the best", 'is_published': True}
+]
+
+cats_db = [
+    {'id': 1, 'name': 'Actors'},
+    {'id': 2, 'name': 'Singers'},
+    {'id': 3, 'name': 'Sportsmen'},
 ]
 
 def index(request):
     data = {
-        'title': 'Blog',
-        'posts': d,
-        'menu': menu
+        'title': 'Main Page',
+        'posts': data_db,
+        'menu': menu,
+        'cat_selected': 0,
     }
     return render(request, 'learning_logs/index-learn.html', context=data)
 
 def about(request):
-    return render(request, 'learning_logs/about-learn.html', {'about': 'about Site', 'menu': menu})
+    return render(request, 'learning_logs/about-learn.html', {'title': 'about Site', 'menu': menu})
 
 def addpage(request):
     return HttpResponse("Adding of post")
@@ -37,6 +46,16 @@ def contact(request):
 
 def login(request):
     return HttpResponse("Autorization")
+
+def show_category(request, cat_id):
+    data = {
+        'title': 'View  by Category',
+        'posts': data_db,
+        'menu': menu,
+        'cat_selected': cat_id,
+    }
+    return render(request, 'learning_logs/index-learn.html', context=data)
+
 
 def show_post(request, post_id):
     return HttpResponse(f'Show of page with id = {post_id}')
