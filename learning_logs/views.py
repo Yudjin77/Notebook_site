@@ -1,23 +1,19 @@
-from django.shortcuts import render, redirect
-# from .models import Topic, Entry
+import uuid
+import os
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import AddPostForm, UploadFileForm
+from .models import Women, Category, TagPost, UploadFiles
 # from .forms import TopicForm, EntryForm
 from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.urls import reverse
 from django.template.loader import render_to_string
+
 
 menu = [
     {"title":"About us", "url_name": "about"},
     {"title":"Add post", "url_name": "addpage"},
     {"title":"Returning call", "url_name": "contact"},
     {"title":"Enter", "url_name": "login"}
-]
-
-data_db = [
-    {'id': 1, 'title': "Margo", 'content':'''<h1>Margot Elise Robbie</h1> was born on July 2, 1990 in Dalby, Queensland, Australia to Scottish parents. 
-    Her mother, Sarie Kessler, is a physiotherapist, and her father, is Doug Robbie. 
-    She comes from a family of four children, having two brothers and one sister.''', 'is_published': True},
-    {'id': 2, 'title': "David", 'content': "Rich billioner", 'is_published': True},
-    {'id': 3, 'title': "Rick", 'content': "Best of the best", 'is_published': True}
 ]
 
 cats_db = [
@@ -27,19 +23,67 @@ cats_db = [
 ]
 
 def index(request):
+    posts = Women.published.all().select_related('cat').order_by('-time_create')
     data = {
         'title': 'Main Page',
-        'posts': data_db,
+        'posts': posts,
         'menu': menu,
         'cat_selected': 0,
     }
     return render(request, 'learning_logs/index-learn.html', context=data)
 
+# def handle_upload_file(f):
+#     ext = os.path.splitext(f.name)[-1]
+#     unique_filename = f"{uuid.uuid4()}{ext}"
+#     save_path = os.path.join("learning_log/uploads/", unique_filename)
+#     with open(save_path, "wb+") as destination:
+#         for chunk in f.chunks():
+#             destination.write(chunk)
+
+
 def about(request):
-    return render(request, 'learning_logs/about-learn.html', {'title': 'about Site', 'menu': menu})
+    if request.method == "POST":
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            # handle_upload_file(form.cleaned_data['file'])
+            fp = UploadFiles(file=form.cleaned_data['file'])
+            fp.save()
+    else:
+        form = UploadFileForm()
+        # handle_upload_file(request.FILES['file_upload'])
+    #     form = UploadFileForm(request.POST, request.FILES)
+    #     if form.is_valid():
+    #         # handle_upload_file(form.cleaned_data['file'])
+    #         fp = UploadFiles(file=form.cleaned_data['file'])
+    #         fp.save()
+    # else:
+    #     form = UploadFileForm()
+    #
+    return render(request, 'learning_logs/about-learn.html',
+                  {'title': 'about Site', 'menu': menu, 'form': form})
+
 
 def addpage(request):
-    return HttpResponse("Adding of post")
+    if request.method == "POST":
+        form = AddPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            # # print(form.cleaned_data)
+            # try:
+            #     Women.objects.create(**form.cleaned_data)
+            #     return redirect('home ')
+            # except:
+            #     form.add_error(None, "Ошибка Добавления поста")
+            return redirect('home')
+    else:
+        form = AddPostForm()
+
+    date = {
+        'menu': menu,
+        'title': 'Adding new page',
+        'form': form,
+    }
+    return render(request, 'learning_logs/addpage.html', date)
 
 def contact(request):
     return HttpResponse("Returning call")
@@ -47,21 +91,45 @@ def contact(request):
 def login(request):
     return HttpResponse("Autorization")
 
-def show_category(request, cat_id):
+def show_category(request, cat_slug):
+    category = get_object_or_404(Category, slug=cat_slug)
+    posts = Women.published.filter(cat_id=category.pk).select_related('cat')
     data = {
-        'title': 'View  by Category',
-        'posts': data_db,
+        'title': f'Category: {category.name}',
+        'posts': posts,
         'menu': menu,
-        'cat_selected': cat_id,
+        'cat_selected': category.pk
     }
     return render(request, 'learning_logs/index-learn.html', context=data)
 
 
-def show_post(request, post_id):
-    return HttpResponse(f'Show of page with id = {post_id}')
+def show_post(request, post_slug):
+    post = get_object_or_404(Women, slug=post_slug)
+    data = {
+        'title': post.title,
+        'post': post,
+        'menu': menu,
+        'cat_selected': 1,
+    }
+
+    return render(request, 'learning_logs/post.html', data)
 
 
-# Create your views here.
+def show_tag_by_postlist(request, tag_slug):
+    tag = get_object_or_404(TagPost, slug=tag_slug)
+    posts = tag.tags.filter(is_published=1).select_related('cat')
+    data = {
+        'title': f'Tag: {tag.tag}',
+        'posts': posts,
+        'menu': menu,
+        'cat_selected': None,
+    }
+
+    return render(request, 'learning_logs/index-learn.html', context=data)
+
+
+
+
 # def index(request):
 #     return render(request, 'learning_logs/index.html')
 #

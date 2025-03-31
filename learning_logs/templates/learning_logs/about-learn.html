@@ -2,4 +2,9 @@
 
 {% block content %}
 <p>{{ title }}</p>
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <p><button type="submit">Send</button>
+</form>
 {% endblock %}
